@@ -69,15 +69,15 @@ class SudokuApplicationTests {
 	}
 
 	@Test
-	public void validSudokuShouldPass() throws Exception {
+	public void solvedValidSudokuShouldPass() throws Exception {
 		String puzzle = "435269781682571493197834562826195347374682915951743628519326874248957136763418259";
-		assertThat(new Sudoku(0, puzzle)).hasFieldOrPropertyWithValue("status", "valid");
+		assertThat(new Sudoku(0, puzzle)).hasFieldOrPropertyWithValue("status", "solved");
 	}
 
 	@Test
-	public void anotherValidSudokuShouldPass() throws Exception {
+	public void anotherSolvedValidSudokuShouldPass() throws Exception {
 		String puzzle = "123678945584239761967145328372461589691583274458792613836924157219857436745316892";
-		assertThat(new Sudoku(0, puzzle)).hasFieldOrPropertyWithValue("status", "valid");
+		assertThat(new Sudoku(0, puzzle)).hasFieldOrPropertyWithValue("status", "solved");
 	}
 
 	@Test
@@ -92,6 +92,21 @@ class SudokuApplicationTests {
 		assertThat(new Sudoku(0, puzzle)).hasFieldOrPropertyWithValue("status", "valid");
 	}
 
+	@Test
+	public void incompleteValidSudokuSolutionShouldPass() throws Exception {
+		String puzzle = "000260701680070090190004500820100040004602900050003028009300074040050036703018000";
+		Sudoku question = new Sudoku(0, puzzle);
+		int[] answer = question.solve();
+		assertThat(Sudoku.isSolved(answer)).isEqualTo(true);
+	}
+
+	@Test
+	public void anotherValidSudokuSolutionShouldPass() throws Exception {
+		String puzzle = "020608000580009700000040000370000500600000004008000013000020000009800036000306090";
+		Sudoku question = new Sudoku(0, puzzle);
+		int[] answer = question.solve();
+		assertThat(Sudoku.isSolved(answer)).isEqualTo(true);
+	}
 
 	@Test
 	public void unsolvableSudokuShouldFail() throws Exception {
