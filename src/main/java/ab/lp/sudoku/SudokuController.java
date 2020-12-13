@@ -16,4 +16,15 @@ public class SudokuController {
     public Sudoku greeting(@RequestParam(value = "puzzle", defaultValue = "") String puzzle) {
         return new Sudoku(counter.incrementAndGet(), puzzle);
     }
+
+    @GetMapping("/generate")
+    public Sudoku generatePuzzle(@RequestParam(value = "level", defaultValue = "1") String level) {
+        int difficulty = 1;
+        try {
+            difficulty = Integer.parseInt(level);
+        } catch (NumberFormatException e) {
+            difficulty = 1;
+        }
+        return new Sudoku(true, difficulty);
+    }
 }

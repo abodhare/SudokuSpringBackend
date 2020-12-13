@@ -119,4 +119,35 @@ class SudokuApplicationTests {
 		String puzzle = "020608000580009700000040000370000500600000004008000013000000000000000000000000000";
 		assertThat(new Sudoku(0, puzzle)).hasFieldOrPropertyWithValue("status", "invalid");
 	}
+
+	@Test
+	public void randomSudokuShouldBeValid() throws Exception {
+		Sudoku question = new Sudoku(true, 1);
+		int[] answer = question.solve();
+		assertThat(Sudoku.isSolved(answer)).isEqualTo(true);
+	}
+
+	@Test
+	public void generateShouldHaveValidPuzzle() throws Exception {
+		assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/generate", String.class))
+				.contains("valid");
+	}
+
+	@Test
+	public void generateEasyShouldHaveValidPuzzle() throws Exception {
+		assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/generate?level=1", String.class))
+				.contains("valid");
+	}
+
+	@Test
+	public void generateMediumShouldHaveValidPuzzle() throws Exception {
+		assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/generate?level=2", String.class))
+				.contains("valid");
+	}
+
+	@Test
+	public void generateHardShouldHaveValidPuzzle() throws Exception {
+		assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/generate?level=3", String.class))
+				.contains("valid");
+	}
 }

@@ -1,7 +1,9 @@
 package ab.lp.sudoku;
 
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class Sudoku {
 
@@ -25,6 +27,51 @@ public class Sudoku {
                 status = "valid";
             }
         }
+    }
+
+    public Sudoku(boolean random, int difficulty) {
+        Random rand = new Random();
+        int[] puzzle = new int[81];
+        this.content = new int[81];
+        randomSolve(this.content, puzzle, 0, 0);
+        this.id = -1;
+        System.arraycopy(this.content, 0, puzzle, 0, this.content.length);
+
+        int nums;
+        switch (difficulty) {
+            case 1:
+                nums = 30;
+                break;
+            case 2:
+                nums = 40;
+                break;
+            case 3:
+                nums = 55;
+                break;
+            default:
+                nums = 20;
+                break;
+        }
+
+        int i = 0;
+        while (i < nums) {
+            int num;
+            do {
+                num = rand.nextInt(81);
+            } while (this.content[num] == 0);
+
+            int tmp = this.content[num];
+            this.content[num] = 0;
+
+            solve();
+            if (isMultiple()) {
+                this.content[num] = tmp;
+                continue;
+            }
+
+            i++;
+        }
+        status = "valid";
     }
 
     public long getId() {
@@ -99,6 +146,9 @@ public class Sudoku {
         System.arraycopy(this.content, 0, puzzle, 0, this.content.length);
         int x = solve(answer, puzzle, 0, 0, 0);
         if (x > 1) setMultiple(true);
+        else {
+            setMultiple(false);
+        }
         return answer;
     }
 
@@ -138,7 +188,7 @@ public class Sudoku {
         return x;
     }
 
-    private boolean isSafe(int[] puzzle, int num, int i, int j) {
+    private static boolean isSafe(int[] puzzle, int num, int i, int j) {
         int index = 9 * j + i;
         if (puzzle[index] != 0) return false;
         puzzle[index] = num;
@@ -204,5 +254,46 @@ public class Sudoku {
 
     public void setMultiple(boolean multiple) {
         this.multiple = multiple;
+    }
+
+    private int randomSolve(int[] answer, int[] puzzle, int index, int x) {
+        int i = index % 9, j = index / 9;
+        if (index == 81) {
+            System.arraycopy(puzzle, 0, answer, 0, 81);
+            return x + 1;
+        }
+
+        if (puzzle[index] != 0) {
+            return randomSolve(answer, puzzle, index+1, x);
+        }
+
+        int[] nums = new int[9];
+        for (int k = 0; k < 9; k++) {
+            nums[k] = k+1;
+        }
+        shuffleArray(nums);
+        for (int k : nums) {
+            if (isSafe(puzzle, k, i, j)) {
+                puzzle[index] = k;
+                int solved = randomSolve(answer, puzzle, index + 1, x);
+                if (solved > 0) {
+                    return solved;
+                }
+                puzzle[index] = 0;
+            }
+        }
+
+        return x;
+    }
+
+    private static void shuffleArray(int[] array) {
+        int index, temp;
+        Random random = new Random();
+        for (int i = array.length - 1; i > 0; i--) {
+            index = random.nextInt(i + 1);
+            temp = array[index];
+            array[index] = array[i];
+            array[i] = temp;
+        }
     }
 }
