@@ -9,6 +9,7 @@ public class Sudoku {
 
     private final long id;
     private final int[] content;
+    private final int[] solution;
     private final String status;
     private boolean multiple;
 
@@ -17,8 +18,9 @@ public class Sudoku {
         this.content = tryParse(puzzle);
         if (isSolved(this.content)) {
             status = "solved";
+            this.solution = this.content;
         } else {
-            solve();
+            this.solution = solve();
             if (isMultiple()) {
                 status = "invalid";
             } else if (!isValid(this.content)) {
@@ -36,6 +38,9 @@ public class Sudoku {
         randomSolve(this.content, puzzle, 0, 0);
         this.id = -1;
         System.arraycopy(this.content, 0, puzzle, 0, this.content.length);
+        int[] solution = new int[81];
+        System.arraycopy(this.content, 0, solution, 0, this.content.length);
+        this.solution = solution;
 
         int nums;
         switch (difficulty) {
@@ -80,6 +85,10 @@ public class Sudoku {
 
     public int[] getContent() {
         return content;
+    }
+
+    public int[] getSolution() {
+        return solution;
     }
 
     public int[] tryParse(String puzzle) {
